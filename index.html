@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diorama Studio Pro</title>
+  <script src="https://tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans pb-12">
+
+  <header class="bg-slate-800 p-4 border-b border-slate-700 sticky top-0 z-10">
+    <h1 class="text-lg font-bold text-amber-400">Diorama Studio Pro</h1>
+    <p class="text-xs text-slate-400">All Scale • Multi-Angle AI • Shopee HPP & Harga Jual</p>
+  </header>
+
+  <main class="p-4 space-y-5 max-w-md mx-auto">
+
+    <!-- 1. SKALA & UKURAN -->
+    <section class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+      <h2 class="font-bold text-amber-400 text-sm">1. SKALA & UKURAN BASE</h2>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="text-xs text-slate-400">Skala (1 : X)</label>
+          <select id="skala" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-sm mt-1">
+            <option value="64" selected>1:64 (Hot Wheels)</option>
+            <option value="43">1:43 (Diecast)</option>
+            <option value="35">1:35 (Militer)</option>
+            <option value="24">1:24 (Model Kit)</option>
+            <option value="18">1:18 (Large)</option>
+            <option value="12">1:12 (Figure)</option>
+            <option value="87">1:87 (HO Scale)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Skala Custom</label>
+          <input type="number" id="skalaCustom" placeholder="Misal: 50" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-sm mt-1">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="text-xs text-slate-400">Panjang (cm)</label>
+          <input type="number" id="panjangCm" value="30" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-sm mt-1">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Lebar (cm)</label>
+          <input type="number" id="lebarCm" value="20" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-sm mt-1">
+        </div>
+      </div>
+
+      <div class="bg-slate-950 p-2.5 rounded-lg text-xs flex justify-between">
+        <span class="text-slate-400">Ukuran Dunia Nyata:</span>
+        <span id="realSizeText" class="font-bold text-emerald-400">19.2 m × 12.8 m</span>
+      </div>
+    </section>
+
+    <!-- 2. SKETSA DENAH -->
+    <section class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
+      <div class="flex justify-between items-center">
+        <h2 class="font-bold text-amber-400 text-sm">2. SKETSA DENAH</h2>
+        <button onclick="clearCanvas()" class="text-xs bg-red-600/30 text-red-300 px-2 py-1 rounded">Hapus</button>
+      </div>
+      <canvas id="sketchCanvas" width="320" height="180" class="w-full bg-slate-950 border border-slate-600 rounded-lg touch-none"></canvas>
+    </section>
+
+    <!-- 3. GENERATE GAMBAR REAL MULTI-ANGLE -->
+    <section class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+      <h2 class="font-bold text-amber-400 text-sm">3. GAMBAR REALISTIS MULTI-ANGLE</h2>
+      <textarea id="promptDiorama" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-sm" placeholder="Konsep: rumah klasik, jalan batu blok, rumput hijau, lampu halaman"></textarea>
+      <select id="angleSelect" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-sm">
+        <option value="eye-level street view">Sejajar Mata (Eye-Level)</option>
+        <option value="isometric 45 degree miniature diorama">Sudut 45° (Isometric)</option>
+        <option value="top-down aerial view">Tampak Atas (Top-Down)</option>
+        <option value="low angle dramatic macro shot">Dari Bawah (Low Angle)</option>
+        <option value="close-up macro detail shot">Detail Dekat (Macro)</option>
+      </select>
+      <button onclick="generateRender()" class="w-full bg-amber-500 text-slate-950 font-bold py-2.5 rounded-lg text-sm">
+        Generate Gambar Realistis
+      </button>
+      <div id="renderContainer" class="hidden pt-2">
+        <p id="loadingText" class="text-xs text-amber-300 text-center">Sedang merender gambar...</p>
+        <img id="renderResult" class="w-full rounded-lg border border-slate-600 hidden">
+      </div>
+    </section>
+
+    <!-- 4. DATABASE SHOPEE, MATERIAL & HARGA JUAL -->
+    <section class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+      <div class="flex justify-between items-center">
+        <h2 class="font-bold text-amber-400 text-sm">4. MATERIAL SHOPEE & HARGA JUAL</h2>
+        <button onclick="simpanLokal()" class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded font-semibold">Simpan</button>
+      </div>
+
+      <!-- Opsional: Sync Google Sheets Database_Harga -->
+      <div class="flex gap-1.5">
+        <input type="text" id="sheetApiUrl" placeholder="URL Apps Script Sheets (Opsional)" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-xs">
+        <button onclick="syncSheetPrices()" class="bg-blue-600 text-white px-3 rounded-lg text-xs font-semibold shrink-0">Sync</button>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <div class="flex justify-between items-center bg-slate-900 p-2 rounded">
+          <a href="https://shopee.co.id" target="_blank" class="text-amber-300 underline">PVC Foamboard 3mm ↗</a>
+          <input type="number" id="hargaPvc" value="45000" class="w-24 bg-slate-800 border border-slate-600 rounded px-2 py-1 text-right">
+        </div>
+        <div class="flex justify-between items-center bg-slate-900 p-2 rounded">
+          <a href="https://shopee.co.id" target="_blank" class="text-amber-300 underline">Cat Akrilik Set ↗</a>
+          <input type="number" id="hargaCat" value="35000" class="w-24 bg-slate-800 border border-slate-600 rounded px-2 py-1 text-right">
+        </div>
+        <div class="flex justify-between items-center bg-slate-900 p-2 rounded">
+          <a href="https://shopee.co.id" target="_blank" class="text-amber-300 underline">Static Grass & Pohon ↗</a>
+          <input type="number" id="hargaRumput" value="25000" class="w-24 bg-slate-800 border border-slate-600 rounded px-2 py-1 text-right">
+        </div>
+        <div class="flex justify-between items-center bg-slate-900 p-2 rounded">
+          <a href="https://shopee.co.id" target="_blank" class="text-amber-300 underline">Lem, Dempul & LED ↗</a>
+          <input type="number" id="hargaAksesoris" value="30000" class="w-24 bg-slate-800 border border-slate-600 rounded px-2 py-1 text-right">
+        </div>
+        <div class="flex justify-between items-center bg-slate-900 p-2 rounded">
+          <span>Margin Jasa & Untung (%)</span>
+          <input type="number" id="marginPersen" value="60" class="w-24 bg-slate-800 border border-slate-600 rounded px-2 py-1 text-right">
+        </div>
+      </div>
+
+      <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 space-y-1 text-sm">
+        <div class="flex justify-between text-slate-400">
+          <span>Estimasi Kebutuhan PVC:</span>
+          <span id="kebutuhanPvc" class="text-slate-200">0 cm²</span>
+        </div>
+        <div class="flex justify-between text-slate-400">
+          <span>Total Modal (HPP):</span>
+          <span id="totalHpp" class="text-amber-400 font-bold">Rp 0</span>
+        </div>
+        <div class="flex justify-between text-base pt-1 border-t border-slate-800">
+          <span class="font-bold">Harga Jual:</span>
+          <span id="hargaJual" class="text-emerald-400 font-bold">Rp 0</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const fields = ['hargaPvc', 'hargaCat', 'hargaRumput', 'hargaAksesoris', 'marginPersen', 'sheetApiUrl'];
+    fields.forEach(id => {
+      const saved = localStorage.getItem(id);
+      if (saved) document.getElementById(id).value = saved;
+    });
+
+    function simpanLokal() {
+      fields.forEach(id => localStorage.setItem(id, document.getElementById(id).value));
+      alert('Data harga & link tersimpan!');
+    }
+
+    ['skala', 'skalaCustom', 'panjangCm', 'lebarCm', 'hargaPvc', 'hargaCat', 'hargaRumput', 'hargaAksesoris', 'marginPersen'].forEach(id => {
+      document.getElementById(id).addEventListener('input', hitungSemua);
+    });
+
+    function hitungSemua() {
+      const custom = parseFloat(document.getElementById('skalaCustom').value);
+      const skala = custom > 0 ? custom : parseFloat(document.getElementById('skala').value);
+      const p = parseFloat(document.getElementById('panjangCm').value) || 0;
+      const l = parseFloat(document.getElementById('lebarCm').value) || 0;
+
+      document.getElementById('realSizeText').innerText = `${((p * skala) / 100).toFixed(1)} m × ${((l * skala) / 100).toFixed(1)} m`;
+
+      const luasBase = p * l;
+      document.getElementById('kebutuhanPvc').innerText = `${Math.round(luasBase * 1.8)} cm²`;
+      const faktor = Math.max(0.5, luasBase / 600);
+
+      const hpp = Math.round(
+        ((parseFloat(document.getElementById('hargaPvc').value) || 0) * faktor) +
+        ((parseFloat(document.getElementById('hargaCat').value) || 0) * faktor) +
+        ((parseFloat(document.getElementById('hargaRumput').value) || 0) * faktor) +
+        (parseFloat(document.getElementById('hargaAksesoris').value) || 0)
+      );
+
+      const margin = parseFloat(document.getElementById('marginPersen').value) || 0;
+      const jual = Math.round(hpp + (hpp * (margin / 100)));
+
+      document.getElementById('totalHpp').innerText = 'Rp ' + hpp.toLocaleString('id-ID');
+      document.getElementById('hargaJual').innerText = 'Rp ' + jual.toLocaleString('id-ID');
+    }
+
